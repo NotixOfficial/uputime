@@ -76,3 +76,6 @@ yarn-error.log
 
 # interni alatni dir
 .github/modernize/
+
+# release keystore (lokalno potpisivanje, ne deli se)
+android/app/uputime-release.keystore

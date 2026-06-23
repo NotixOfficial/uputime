@@ -96,6 +96,14 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            // Lozinke se citaju iz gradle.properties (van git praćenja). Ako
+            // nisu definisane, pada nazad na ugradjene vrednosti za ovaj uzorak.
+            storeFile file('uputime-release.keystore')
+            storePassword project.findProperty("UPUTIME_STORE_PASSWORD") ?: "uputime2026"
+            keyAlias project.findProperty("UPUTIME_KEY_ALIAS") ?: "uputime"
+            keyPassword project.findProperty("UPUTIME_KEY_PASSWORD") ?: "uputime2026"
+        }
     }
     buildTypes {
         debug {
@@ -104,9 +112,7 @@ android {
             manifestPlaceholders = [usesCleartextTraffic: "true"]
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.release
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             manifestPlaceholders = [usesCleartextTraffic: "false"]
