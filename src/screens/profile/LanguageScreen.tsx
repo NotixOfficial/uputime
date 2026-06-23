@@ -3,21 +3,29 @@ import { View, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { Screen, Header, AppText, Card, ListRow, Icon } from '../../components';
+import { Screen, Header, AppText, Card, ListRow, Icon, useToast } from '../../components';
 import { colors, spacing } from '../../theme';
 import { LANGUAGES, AppLanguage } from '../../i18n';
 import { useSettingsStore } from '../../store/useSettingsStore';
+import { haptics } from '../../utils/haptics';
 import { ProfileStackParamList } from '../../navigation/types';
 
 type Nav = NativeStackNavigationProp<ProfileStackParamList, 'Language'>;
 
 export function LanguageScreen() {
   const { t } = useTranslation();
+  const toast = useToast();
   const navigation = useNavigation<Nav>();
   const language = useSettingsStore(s => s.language);
   const setLanguage = useSettingsStore(s => s.setLanguage);
 
-  const select = (code: AppLanguage) => setLanguage(code);
+  const select = (code: AppLanguage) => {
+    if (code === language) return;
+    setLanguage(code);
+    haptics.light();
+    // t() je već na novom jeziku → potvrda se vidi na izabranom jeziku.
+    toast.show(t('profile.languageChanged'), { tone: 'success' });
+  };
 
   return (
     <Screen header={<Header title={t('language.title')} onBack={() => navigation.goBack()} />}>

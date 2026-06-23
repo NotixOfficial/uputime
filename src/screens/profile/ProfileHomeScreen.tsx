@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -13,10 +13,12 @@ import {
   Badge,
   SectionHeader,
   Icon,
+  useToast,
 } from '../../components';
 import { colors, radius, spacing } from '../../theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useSettingsStore } from '../../store/useSettingsStore';
+import { haptics } from '../../utils/haptics';
 import { LANGUAGES } from '../../i18n';
 import { ProfileStackParamList } from '../../navigation/types';
 
@@ -24,6 +26,7 @@ type Nav = NativeStackNavigationProp<ProfileStackParamList, 'ProfileHome'>;
 
 export function ProfileHomeScreen() {
   const { t } = useTranslation();
+  const toast = useToast();
   const navigation = useNavigation<Nav>();
   const user = useAuthStore(s => s.user);
   const isAuth = useAuthStore(s => s.isAuthenticated);
@@ -31,6 +34,21 @@ export function ProfileHomeScreen() {
   const language = useSettingsStore(s => s.language);
 
   const langLabel = t(LANGUAGES.find(l => l.code === language)?.labelKey ?? 'language.srLatn');
+
+  const confirmSignOut = () => {
+    Alert.alert(t('auth.signOutConfirm'), t('auth.signOutConfirmBody'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      {
+        text: t('profile.signOut'),
+        style: 'destructive',
+        onPress: () => {
+          signOut();
+          haptics.light();
+          toast.show(t('auth.signedOut'), { tone: 'info' });
+        },
+      },
+    ]);
+  };
 
   return (
     <Screen header={<Header title={t('profile.title')} />}>
@@ -112,7 +130,7 @@ export function ProfileHomeScreen() {
 
         {isAuth && (
           <View style={styles.section}>
-            <Button title={t('profile.signOut')} icon="log-out" variant="danger" onPress={signOut} />
+            <Button title={t('profile.signOut')} icon="log-out" variant="danger" onPress={confirmSignOut} />
           </View>
         )}
       </ScrollView>

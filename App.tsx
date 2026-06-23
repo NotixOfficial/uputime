@@ -8,6 +8,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import './src/i18n'; // inicijalizacija prevoda (sr-Latn / sr-Cyrl / en)
 import { RootNavigator } from './src/navigation/RootNavigator';
+import { ToastProvider } from './src/components';
 import { colors } from './src/theme';
 
 function App(): React.JSX.Element {
@@ -15,7 +16,9 @@ function App(): React.JSX.Element {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <SafeAreaProvider>
         <StatusBar barStyle="dark-content" backgroundColor={colors.bg} />
-        <RootNavigator />
+        <ToastProvider>
+          <RootNavigator />
+        </ToastProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );

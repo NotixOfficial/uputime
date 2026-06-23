@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, TextInput, Pressable, StyleSheet } from 'react-native';
 import { colors, radius, spacing, HIT_TARGET } from '../theme';
 import { Icon } from './Icon';
+import { haptics } from '../utils/haptics';
 
 interface ComposerProps {
   placeholder: string;
@@ -12,17 +13,19 @@ interface ComposerProps {
 
 export function Composer({ placeholder, onSend, disabled, autoFocus }: ComposerProps) {
   const [value, setValue] = useState('');
+  const [focused, setFocused] = useState(false);
   const canSend = value.trim().length > 0 && !disabled;
 
   const handleSend = () => {
     if (!canSend) return;
+    haptics.light();
     onSend(value.trim());
     setValue('');
   };
 
   return (
     <View style={styles.wrap}>
-      <View style={styles.inner}>
+      <View style={[styles.inner, focused && styles.innerFocused]}>
         <TextInput
           style={styles.input}
           placeholder={placeholder}
@@ -30,6 +33,8 @@ export function Composer({ placeholder, onSend, disabled, autoFocus }: ComposerP
           maxFontSizeMultiplier={1.6}
           value={value}
           onChangeText={setValue}
+          onFocus={() => setFocused(true)}
+          onBlur={() => setFocused(false)}
           onSubmitEditing={handleSend}
           returnKeyType="send"
           autoFocus={autoFocus}
@@ -40,8 +45,9 @@ export function Composer({ placeholder, onSend, disabled, autoFocus }: ComposerP
           onPress={handleSend}
           disabled={!canSend}
           accessibilityRole="button"
+          accessibilityState={{ disabled: !canSend }}
           accessibilityLabel="Pošalji"
-          style={[styles.send, !canSend && styles.sendDisabled]}>
+          style={({ pressed }) => [styles.send, !canSend && styles.sendDisabled, pressed && canSend && styles.sendPressed]}>
           <Icon name="send" size={18} color={colors.white} />
         </Pressable>
       </View>
@@ -70,6 +76,7 @@ const styles = StyleSheet.create({
     paddingRight: spacing.xs,
     paddingVertical: spacing.xs,
   },
+  innerFocused: { borderColor: colors.primary },
   input: {
     flex: 1,
     fontSize: 15,
@@ -86,4 +93,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   sendDisabled: { backgroundColor: colors.muted2 },
+  sendPressed: { opacity: 0.8 },
 });

@@ -58,7 +58,7 @@ export function DocumentsListScreen() {
                       title={loc(proc.title)}
                       subtitle={t('documents.ownedOf', { owned, total })}
                       onPress={() =>
-                        navigation.navigate('ProcedureDocuments', { procedureId: proc.id })
+                        navigation.navigate('ProcedureDetail', { procedureId: proc.id })
                       }
                       right={
                         owned === total ? (
@@ -91,7 +91,7 @@ export function DocumentsListScreen() {
                   docs: proc.documents.length,
                 })}
                 onPress={() =>
-                  navigation.navigate('ProcedureDocuments', { procedureId: proc.id })
+                  navigation.navigate('ProcedureDetail', { procedureId: proc.id })
                 }
               />
             </View>

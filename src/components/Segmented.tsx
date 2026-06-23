@@ -20,7 +20,7 @@ export function Segmented<T extends string>({ options, value, onChange }: Segmen
             onPress={() => onChange(opt.value)}
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
-            style={[styles.item, active && styles.itemActive]}>
+            style={({ pressed }) => [styles.item, active && styles.itemActive, pressed && !active && styles.itemPressed]}>
             <AppText
               variant="caption"
               weight="semibold"
@@ -58,4 +58,5 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     elevation: 1,
   },
+  itemPressed: { opacity: 0.6 },
 });

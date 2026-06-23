@@ -7,8 +7,11 @@ export { Composer } from './Composer';
 export { Screen, Header } from './Screen';
 export { Segmented } from './Segmented';
 export { Input } from './Input';
+export { DatePickerField } from './DatePickerField';
 export { Icon } from './Icon';
 export type { IconName } from './Icon';
+export { ToastProvider, useToast } from './Toast';
+export type { ToastTone } from './Toast';
 export {
   Chip,
   SectionHeader,

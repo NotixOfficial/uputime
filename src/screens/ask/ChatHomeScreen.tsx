@@ -31,6 +31,7 @@ export function ChatHomeScreen() {
   const navigation = useNavigation<Nav>();
   const newConversation = useChatStore(s => s.newConversation);
   const ask = useChatStore(s => s.ask);
+  const askProcedure = useChatStore(s => s.askProcedure);
   const byProcedure = useProgressStore(s => s.byProcedure);
 
   const active = Object.values(byProcedure).sort((a, b) =>
@@ -41,6 +42,14 @@ export function ChatHomeScreen() {
     newConversation();
     navigation.navigate('Conversation');
     ask(query);
+  };
+
+  // Predlog sa home ekrana: korisnik je već izabrao postupak, pa idemo
+  // direktno na taj postupak (bez nuđenja izbora) i šaljemo odgovor.
+  const startSuggestion = (procedureSlug: string, label: string) => {
+    newConversation();
+    navigation.navigate('Conversation');
+    askProcedure(procedureSlug, label);
   };
 
   return (
@@ -76,9 +85,9 @@ export function ChatHomeScreen() {
             return (
               <Pressable
                 key={s.procedureSlug}
-                onPress={() => startQuery(s.label)}
+                onPress={() => startSuggestion(s.procedureSlug, loc(s.label))}
                 accessibilityRole="button"
-                accessibilityLabel={s.label}
+                accessibilityLabel={loc(s.label)}
                 style={({ pressed }) => [styles.suggest, pressed && styles.pressed]}>
                 <View style={styles.suggestIcon}>
                   <Icon

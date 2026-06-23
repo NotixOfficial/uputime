@@ -79,3 +79,5 @@ yarn-error.log
 
 # release keystore (lokalno potpisivanje, ne deli se)
 android/app/uputime-release.keystore
+
+*.html

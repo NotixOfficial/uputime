@@ -80,6 +80,30 @@ export async function scheduleReminder(
   }
 }
 
+/**
+ * Demo: prikazuje obaveštenje ODMAH pri kreiranju podsetnika (da korisnik vidi „kako izgleda").
+ * Lokalno obaveštenje — radi offline, bez servera/push tokena.
+ */
+export async function displayDemoNotification(
+  title: string,
+  body: string,
+  channelName: string,
+): Promise<void> {
+  const notifee = getNotifee();
+  if (!notifee) return;
+  try {
+    await ensureChannel(notifee, channelName);
+    await notifee.displayNotification({
+      title,
+      body,
+      android: { channelId: CHANNEL_ID, pressAction: { id: 'default' } },
+      ios: { foregroundPresentationOptions: { banner: true, list: true, sound: true } },
+    });
+  } catch {
+    // ignore
+  }
+}
+
 /** Otkazuje SVE zakazane lokalne notifikacije (npr. pri brisanju svih podataka). */
 export async function cancelAllNotifications(): Promise<void> {
   const notifee = getNotifee();

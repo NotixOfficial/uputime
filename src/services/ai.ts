@@ -1,5 +1,5 @@
 import { ActionCard } from '../data/types';
-import { PROCEDURES, procedureById } from '../data/procedures';
+import { PROCEDURES, procedureById, procedureBySlug } from '../data/procedures';
 import { institutionById } from '../data/institutions';
 import { isStale } from '../utils/date';
 
@@ -107,6 +107,17 @@ const FALLBACK: AIResult = {
     })),
 };
 
+function resultForProcedure(procedureId: string): AIResult {
+  const proc = procedureById(procedureId)!;
+  return {
+    text: buildText(procedureId),
+    source: proc.source,
+    sourceDate: proc.updatedAt,
+    stale: isStale(proc.updatedAt),
+    actions: buildActions(procedureId),
+  };
+}
+
 /**
  * Glavni ulaz. U Fazi 2 telo se zamenjuje `fetch` pozivom ka backendu.
  */
@@ -117,12 +128,18 @@ export async function askAI(query: string): Promise<AIResult> {
   const procedureId = matchProcedureId(query);
   if (!procedureId) return FALLBACK;
 
-  const proc = procedureById(procedureId)!;
-  return {
-    text: buildText(procedureId),
-    source: proc.source,
-    sourceDate: proc.updatedAt,
-    stale: isStale(proc.updatedAt),
-    actions: buildActions(procedureId),
-  };
+  return resultForProcedure(procedureId);
+}
+
+/**
+ * Deterministički ulaz za unapred poznat postupak (predlozi na home ekranu).
+ * Ne pogađa po ključnim rečima — odmah vraća odgovor za izabrani postupak.
+ */
+export async function askProcedureAI(procedureSlug: string): Promise<AIResult> {
+  await new Promise<void>(resolve => setTimeout(() => resolve(), 550));
+
+  const proc = procedureBySlug(procedureSlug);
+  if (!proc) return FALLBACK;
+
+  return resultForProcedure(proc.id);
 }

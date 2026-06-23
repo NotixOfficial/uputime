@@ -3,6 +3,7 @@ import { View, Pressable, StyleSheet } from 'react-native';
 import { colors, radius, spacing, HIT_TARGET } from '../theme';
 import { AppText } from './Text';
 import { Icon } from './Icon';
+import { haptics } from '../utils/haptics';
 
 interface CheckRowProps {
   checked: boolean;
@@ -24,9 +25,13 @@ export function CheckRow({
   strikeOnCheck = true,
 }: CheckRowProps) {
   const dim = checked && strikeOnCheck;
+  const handleToggle = () => {
+    haptics.light();
+    onToggle();
+  };
   return (
     <Pressable
-      onPress={onToggle}
+      onPress={handleToggle}
       accessibilityRole="checkbox"
       accessibilityState={{ checked }}
       accessibilityLabel={title}

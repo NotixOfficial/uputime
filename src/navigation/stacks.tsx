@@ -11,8 +11,7 @@ import {
 import { ChatHomeScreen } from '../screens/ask/ChatHomeScreen';
 import { ConversationScreen } from '../screens/ask/ConversationScreen';
 import { DocumentsListScreen } from '../screens/documents/DocumentsListScreen';
-import { ProcedureDocumentsScreen } from '../screens/documents/ProcedureDocumentsScreen';
-import { ProcedureStepsScreen } from '../screens/documents/ProcedureStepsScreen';
+import { ProcedureDetailScreen } from '../screens/documents/ProcedureDetailScreen';
 import { MapHomeScreen } from '../screens/map/MapHomeScreen';
 import { InstitutionDetailScreen } from '../screens/map/InstitutionDetailScreen';
 import { RemindersListScreen } from '../screens/reminders/RemindersListScreen';
@@ -41,8 +40,7 @@ export function DocumentsStack() {
   return (
     <Documents.Navigator screenOptions={noHeader}>
       <Documents.Screen name="DocumentsList" component={DocumentsListScreen} />
-      <Documents.Screen name="ProcedureDocuments" component={ProcedureDocumentsScreen} />
-      <Documents.Screen name="ProcedureSteps" component={ProcedureStepsScreen} />
+      <Documents.Screen name="ProcedureDetail" component={ProcedureDetailScreen} />
     </Documents.Navigator>
   );
 }

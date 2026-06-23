@@ -9,8 +9,8 @@ export type AskStackParamList = {
 /** Stack: Tab "Dokumenti". */
 export type DocumentsStackParamList = {
   DocumentsList: undefined;
-  ProcedureDocuments: { procedureId: string };
-  ProcedureSteps: { procedureId: string };
+  /** Detalji postupka; `initialTab` bira tab pri ulasku (npr. iz AI akcije). */
+  ProcedureDetail: { procedureId: string; initialTab?: 'docs' | 'steps' };
 };
 
 /** Stack: Tab "Mapa". */

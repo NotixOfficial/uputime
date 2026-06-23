@@ -1,5 +1,5 @@
 import React from 'react';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View, StyleSheet, Alert } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -14,21 +14,49 @@ import {
   IconButton,
   EmptyState,
   Icon,
+  useToast,
 } from '../../components';
 import { colors, radius, spacing } from '../../theme';
 import { useReminderStore } from '../../store/useReminderStore';
 import { formatDate, daysUntil } from '../../utils/date';
+import { haptics } from '../../utils/haptics';
+import { Reminder } from '../../data/types';
 import { RemindersStackParamList } from '../../navigation/types';
 
 type Nav = NativeStackNavigationProp<RemindersStackParamList, 'RemindersList'>;
 
 export function RemindersListScreen() {
   const { t } = useTranslation();
+  const toast = useToast();
   const navigation = useNavigation<Nav>();
   const reminders = useReminderStore(s => s.reminders);
   const removeReminder = useReminderStore(s => s.removeReminder);
 
   const sorted = [...reminders].sort((a, b) => a.expiryDate.localeCompare(b.expiryDate));
+
+  // Potvrda pre brisanja (sprečavanje grešaka) + povratna informacija o ishodu.
+  const confirmDelete = (r: Reminder) => {
+    Alert.alert(
+      t('reminders.deleteConfirm', { documentType: r.documentType }),
+      t('reminders.deleteConfirmBody'),
+      [
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('common.delete'),
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              await removeReminder(r.id);
+              haptics.light();
+              toast.show(t('feedback.reminderDeleted'), { tone: 'info' });
+            } catch {
+              toast.show(t('feedback.reminderDeleteFailed'), { tone: 'error' });
+            }
+          },
+        },
+      ],
+    );
+  };
 
   const statusFor = (iso: string): { label: string; tone: 'success' | 'warn' | 'danger' } => {
     const d = daysUntil(iso);
@@ -75,7 +103,7 @@ export function RemindersListScreen() {
                     </View>
                     <IconButton
                       name="trash"
-                      onPress={() => removeReminder(r.id)}
+                      onPress={() => confirmDelete(r)}
                       color={colors.muted2}
                       accessibilityLabel={t('common.delete')}
                       size={18}

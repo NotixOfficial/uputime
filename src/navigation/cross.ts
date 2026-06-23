@@ -4,10 +4,16 @@
 type Nav = { navigate: (name: string, params?: object) => void };
 
 export const goToProcedureDocuments = (nav: Nav, procedureId: string) =>
-  nav.navigate('DocumentsTab', { screen: 'ProcedureDocuments', params: { procedureId } });
+  nav.navigate('DocumentsTab', {
+    screen: 'ProcedureDetail',
+    params: { procedureId, initialTab: 'docs' },
+  });
 
 export const goToProcedureSteps = (nav: Nav, procedureId: string) =>
-  nav.navigate('DocumentsTab', { screen: 'ProcedureSteps', params: { procedureId } });
+  nav.navigate('DocumentsTab', {
+    screen: 'ProcedureDetail',
+    params: { procedureId, initialTab: 'steps' },
+  });
 
 // Nonce osigurava da se mapa re-centrira čak i pri fokusiranju iste institucije.
 let focusNonce = 0;

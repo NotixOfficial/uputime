@@ -33,24 +33,31 @@ export function Chip({
     success: colors.successInk,
     danger: colors.dangerInk,
   };
-  const Wrapper: any = onPress ? Pressable : View;
-  return (
-    <Wrapper
-      onPress={onPress}
-      accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityState={onPress ? { selected } : undefined}
-      style={[
-        styles.chip,
-        { backgroundColor: selected ? colors.primary : bgMap[tone] },
-        selected && { borderColor: colors.primary },
-      ]}>
+  const baseStyle = [
+    styles.chip,
+    { backgroundColor: selected ? colors.primary : bgMap[tone] },
+    selected && { borderColor: colors.primary },
+  ];
+  const inner = (
+    <>
       {icon && (
         <Icon name={icon} size={13} color={selected ? colors.white : fgMap[tone]} strokeWidth={2} />
       )}
       <AppText variant="caption" weight="semibold" color={selected ? colors.white : fgMap[tone]}>
         {label}
       </AppText>
-    </Wrapper>
+    </>
+  );
+
+  if (!onPress) return <View style={baseStyle}>{inner}</View>;
+  return (
+    <Pressable
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityState={{ selected }}
+      style={({ pressed }) => [baseStyle, pressed && styles.chipPressed]}>
+      {inner}
+    </Pressable>
   );
 }
 
@@ -126,18 +133,22 @@ export function IconButton({
   color = colors.ink,
   accessibilityLabel,
   size = 22,
+  checked,
 }: {
   name: IconName;
   onPress?: () => void;
   color?: string;
   accessibilityLabel: string;
   size?: number;
+  /** Za toggle dugmad (npr. prikaz lozinke) — saopštava trenutno stanje čitaču ekrana. */
+  checked?: boolean;
 }) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
+      accessibilityState={checked === undefined ? undefined : { checked }}
       hitSlop={10}
       style={({ pressed }) => [styles.iconButton, pressed && { opacity: 0.6 }]}>
       <Icon name={name} size={size} color={color} />
@@ -190,6 +201,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
   },
+  chipPressed: { opacity: 0.7 },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
